@@ -38,7 +38,7 @@
         </div>
 
         <!-- Remember Me -->
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-3 sm:space-y-0">
+        <!-- <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-3 sm:space-y-0">
             <label for="remember_me" class="inline-flex items-center">
                 <input id="remember_me" 
                     type="checkbox" 
@@ -47,12 +47,12 @@
                 <span class="ml-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
             </label>
 
-            <!-- @if (Route::has('password.request'))
+            @if (Route::has('password.request'))
                 <a class="text-sm text-indigo-600 hover:text-indigo-500" href="{{ route('password.request') }}">
                     {{ __('Forgot your password?') }}
                 </a>
-            @endif -->
-        </div>
+            @endif
+        </div> -->
 
         <div>
             <x-primary-button class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">

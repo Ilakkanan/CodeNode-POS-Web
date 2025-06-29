@@ -18,13 +18,23 @@
                 <nav>
                     <ul class="space-y-2">
                         <li>
-                            <a href="#" class="block px-4 py-2 rounded hover:bg-gray-700">
-                                <i class="fas fa-box mr-2"></i> Products
+                            <a href="{{ route('categories.index') }}" class="block px-4 py-2 rounded hover:bg-gray-700">
+                                <i class="fas fa-tags mr-2"></i> Categories
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('brands.index') }}" class="block px-4 py-2 rounded hover:bg-gray-700">
+                                <i class="fas fa-trademark mr-2"></i> Brands
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('vendors.index') }}" class="block px-4 py-2 rounded hover:bg-gray-700">
+                                <i class="fas fa-truck mr-2"></i> Vendors
                             </a>
                         </li>
                         <li>
                             <a href="#" class="block px-4 py-2 rounded hover:bg-gray-700">
-                                <i class="fas fa-truck mr-"></i> Vendors
+                                <i class="fas fa-box mr-2"></i> Products
                             </a>
                         </li>
                         <li>
@@ -32,15 +42,18 @@
                                 <i class="fas fa-warehouse mr-2"></i> Stock Entry
                             </a>
                         </li>
+                    </ul>
+                    
+                    <!-- Logout at bottom -->
+                    <ul class="space-y-2 mt-auto pt-8">
                         <li>
-                            <a href="{{ route('categories.index') }}" class="block px-4 py-2 rounded hover:bg-gray-700">
-                                <i class="fas fa-tags mr-2"></i> Categories
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="block px-4 py-2 rounded hover:bg-gray-700">
-                                <i class="fas fa-trademark mr-2"></i> Brands
-                            </a>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <a href="{{ route('logout') }}" class="block px-4 py-2 rounded hover:bg-gray-700" onclick="event.preventDefault();
+                                                    this.closest('form').submit();">
+                                    <i class="fas fa-sign-out-alt mr-2"></i> Log Out
+                                </a>
+                            </form>
                         </li>
                     </ul>
                 </nav>
