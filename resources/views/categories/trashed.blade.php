@@ -9,6 +9,38 @@
             </a>
         </div>
 
+        <form id="searchForm" action="{{ route('categories.trashed') }}" method="GET" class="mb-4 w-full max-w-xs">
+            <input
+                type="text"
+                name="search"
+                id="search"
+                value="{{ request('search') }}"
+                placeholder="Search trashed categories..."
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                autocomplete="off"
+            >
+            <input type="hidden" id="searchCaret" name="searchCaret" value="">
+        </form>
+        <script>
+            const searchInput = document.getElementById('search');
+            const searchForm = document.getElementById('searchForm');
+            searchInput.addEventListener('input', function(e) {
+                // Save caret position
+                localStorage.setItem('trashedCategorySearchCaret', searchInput.selectionStart);
+                searchForm.submit();
+            });
+            window.addEventListener('DOMContentLoaded', function() {
+                // Always focus search input on page load
+                searchInput.focus();
+                // Restore caret position if available
+                const caret = localStorage.getItem('trashedCategorySearchCaret');
+                if (caret) {
+                    searchInput.setSelectionRange(caret, caret);
+                    localStorage.removeItem('trashedCategorySearchCaret');
+                }
+            });
+        </script>
+
         @if(session('success'))
             <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
                 <span class="block sm:inline">{{ session('success') }}</span>

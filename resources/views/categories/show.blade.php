@@ -22,24 +22,26 @@
         </div>
 
         <div class="bg-white shadow-md rounded p-6">
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2">category:</label>
-                <p class="text-gray-900">{{ $category->category }}</p>
-            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Category:</label>
+                    <p class="text-gray-900">{{ $category->category }}</p>
+                </div>
 
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2">Description:</label>
-                <p class="text-gray-900">{{ $category->description ?? 'N/A' }}</p>
-            </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Description:</label>
+                    <p class="text-gray-900">{{ $category->description ?? 'N/A' }}</p>
+                </div>
 
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2">Created At:</label>
-                <p class="text-gray-900">{{ $category->created_at->format('M d, Y H:i') }}</p>
-            </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Created At:</label>
+                    <p class="text-gray-900">{{ $category->created_at->format('M d, Y H:i') }}</p>
+                </div>
 
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2">Updated At:</label>
-                <p class="text-gray-900">{{ $category->updated_at->format('M d, Y H:i') }}</p>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Updated At:</label>
+                    <p class="text-gray-900">{{ $category->updated_at->format('M d, Y H:i') }}</p>
+                </div>
             </div>
         </div>
     </div>
