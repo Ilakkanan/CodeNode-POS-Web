@@ -9,8 +9,8 @@
             @method('PUT')
 
             <div class="mb-4">
-                <label for="name" class="block text-gray-700 text-sm font-bold mb-2">category:</label>
-                <input type="text" name="category" id="category" value="{{ old('category', $category->category) }}" required
+                <label for="category" class="block text-gray-700 text-sm font-bold mb-2">Category:</label>
+                <input type="text" name="category" id="category" value="{{ old('category', $category->category) }}" required autofocus
                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                 @error('category')
                     <p class="text-red-500 text-xs italic">{{ $message }}</p>
@@ -36,4 +36,15 @@
             </div>
         </form>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const categoryField = document.getElementById('category');
+            categoryField.focus();
+            
+            // Move cursor to end of text
+            const length = categoryField.value.length;
+            categoryField.setSelectionRange(length, length);
+        });
+    </script>
 @endsection

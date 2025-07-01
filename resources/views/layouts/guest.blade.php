@@ -44,13 +44,13 @@
     <body class="font-sans text-gray-900 antialiased">
         <div class="animated-bg"></div>
         <div class="min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
-            <div class="w-full max-w-md space-y-8">
+            <div class="w-full max-w-sm space-y-8">
                 <div class="text-center">
                     <h1 class="welcome-text text-2xl font-bold tracking-tight sm:text-3xl">Welcome to Code Node (PVT) LTD</h1>
                     <p class="time-text mt-2 text-sm text-gray-600" id="current-time"></p>
                 </div>
 
-                <div class="mt-8 bg-white py-8 px-4 shadow-xl rounded-lg sm:px-10">
+                <div class="mt-8 bg-white py-6 px-4 shadow-xl rounded-lg sm:px-8 login-container">
                     {{ $slot }}
                 </div>
 

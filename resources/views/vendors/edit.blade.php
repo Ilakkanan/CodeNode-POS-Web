@@ -10,7 +10,7 @@
 
         <div class="mb-4">
             <label for="name" class="block text-gray-700 text-sm font-bold mb-2">Name:</label>
-            <input type="text" name="name" id="name" value="{{ old('name', $vendor->name) }}" required
+            <input type="text" name="name" id="name" value="{{ old('name', $vendor->name) }}" required autofocus
                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
             @error('name')
                 <p class="text-red-500 text-xs italic">{{ $message }}</p>
@@ -54,4 +54,16 @@
         </div>
     </form>
 </div>
+
+<script>
+    // Ensure autofocus works consistently across all browsers
+    document.addEventListener('DOMContentLoaded', function() {
+        const nameField = document.getElementById('name');
+        nameField.focus();
+        // nameField.select(); // Select all text for easy editing
+        // Move cursor to end of text
+        const length = nameField.value.length;
+        nameField.setSelectionRange(length, length);
+    });
+</script>
 @endsection
