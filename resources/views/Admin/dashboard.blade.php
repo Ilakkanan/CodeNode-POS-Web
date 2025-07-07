@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>Code Node (PVT) Ltd</title>
     <!-- Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <!-- Tailwind CSS -->
@@ -191,13 +191,19 @@
                             </a>
                         </li>
                         <li>
-                            <a href="#" class="hover:bg-gray-700 rounded">
+                            <a href="{{ route('products.index') }}" class="hover:bg-gray-700 rounded {{ request()->routeIs('products.*') ? 'active' : '' }}">
                                 <i class="fas fa-box"></i>
                                 <span>Products</span>
                             </a>
                         </li>
                         <li>
-                            <a href="#" class="hover:bg-gray-700 rounded">
+                            <a href="{{ route('inventory.index') }}" class="hover:bg-gray-700 rounded {{ request()->routeIs('inventory.*') ? 'active' : '' }}">
+                                <i class="fas fa-boxes"></i>
+                                <span>Inventory</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('stock-entries.index') }}" class="hover:bg-gray-700 rounded {{ request()->routeIs('stock-entries.*') ? 'active' : '' }}">
                                 <i class="fas fa-warehouse"></i>
                                 <span>Stock Entry</span>
                             </a>

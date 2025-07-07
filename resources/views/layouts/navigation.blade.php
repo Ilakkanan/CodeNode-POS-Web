@@ -18,6 +18,39 @@
                 </div>
             </div>
 
+            <!-- Notification Bell -->
+            <div class="hidden sm:flex sm:items-center sm:ms-6 mr-4">
+                <div class="relative" x-data="{ open: false }">
+                    <button @click="open = !open" class="relative focus:outline-none">
+                        <i class="fas fa-bell text-gray-500 text-xl"></i>
+                        @if(Auth::user()->unreadNotifications->count() > 0)
+                            <span class="absolute top-0 right-0 inline-block w-2 h-2 bg-red-600 rounded-full"></span>
+                        @endif
+                    </button>
+                    <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded shadow-lg z-50" style="display: none;" x-cloak>
+                        <div class="p-4 border-b font-bold">Notifications</div>
+                        <ul class="max-h-64 overflow-y-auto">
+                            @forelse(Auth::user()->unreadNotifications->take(5) as $notification)
+                                <li class="px-4 py-2 border-b hover:bg-gray-100">
+                                    {{ $notification->data['message'] ?? 'Notification' }}
+                                    <div class="text-xs text-gray-500 mt-1">
+                                        {{ $notification->created_at->diffForHumans() }}
+                                    </div>
+                                </li>
+                            @empty
+                                <li class="px-4 py-2 text-gray-500">No new notifications.</li>
+                            @endforelse
+                        </ul>
+                        <div class="p-2 text-center">
+                            <form method="POST" action="{{ route('notifications.markAllRead') }}">
+                                @csrf
+                                <button type="submit" class="text-blue-600 hover:underline text-sm">Mark all as read</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
                 <x-dropdown align="right" width="48">
