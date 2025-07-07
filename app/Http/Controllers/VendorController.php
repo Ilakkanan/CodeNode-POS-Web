@@ -30,10 +30,19 @@ class VendorController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'contact_no' => 'required|string|max:20',
+            'name' => 'required|string|max:255|regex:/^[a-zA-Z\s]+$/',
+            'contact_no' => 'required|string|max:10|min:10|regex:/^[0-9]+$/',
             'address' => 'required|string',
-            'nic' => 'nullable|string|max:20'
+            'nic' => [
+                'nullable',
+                'string',
+                'max:12',
+                function ($attribute, $value, $fail) {
+                    if (!preg_match('/^[0-9]{9}[vVxX]$|^[0-9]{12}$/', $value)) {
+                        $fail('The NIC must be either 9 digits followed by V/X or 12 digits.');
+                    }
+                }
+            ]
         ]);
 
         Vendor::create($request->all());
@@ -55,10 +64,19 @@ class VendorController extends Controller
     public function update(Request $request, Vendor $vendor)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'contact_no' => 'required|string|max:20',
+            'name' => 'required|string|max:255|regex:/^[a-zA-Z\s]+$/',
+            'contact_no' => 'required|string|max:10|min:10|regex:/^[0-9]+$/',
             'address' => 'required|string',
-            'nic' => 'nullable|string|max:20'
+            'nic' => [
+                'nullable',
+                'string',
+                'max:12',
+                function ($attribute, $value, $fail) {
+                    if (!preg_match('/^[0-9]{9}[vVxX]$|^[0-9]{12}$/', $value)) {
+                        $fail('The NIC must be either 9 digits followed by V/X or 12 digits.');
+                    }
+                }
+            ]
         ]);
 
         $vendor->update($request->all());

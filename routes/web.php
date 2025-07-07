@@ -6,6 +6,11 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\VendorController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\StockEntryController;
+use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\LowStockNotification;
+use App\Http\Controllers\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -73,3 +78,35 @@ Route::middleware(['auth', 'admin'])->group(function () {
         Route::delete('/{id}/force-delete', [VendorController::class, 'forceDelete'])->name('vendors.force-delete');
     });
 });
+
+//============================ products 2025.07.03 ========================================
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::resource('products', ProductController::class);
+    Route::get('Productstrashed', [ProductController::class, 'trashed'])->name('products.trashed');
+    
+    Route::prefix('products')->group(function () {
+        
+        Route::post('/{id}/restore', [ProductController::class, 'restore'])->name('products.restore');
+        Route::delete('/{id}/force-delete', [ProductController::class, 'forceDelete'])->name('products.force-delete');
+        Route::get('/search', [ProductController::class, 'search'])->name('products.search');
+    });
+});
+
+//============================ Stock Entries ========================================
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::resource('stock-entries', StockEntryController::class);
+    Route::get('stock-entriestrashed', [StockEntryController::class, 'trashed'])->name('stock-entries.trashed');
+    Route::prefix('stock-entries')->group(function () {
+        
+        Route::post('/trashed/{id}/restore', [StockEntryController::class, 'restore'])->name('stock-entries.restore');
+        Route::delete('/trashed/{id}/force-delete', [StockEntryController::class, 'forceDelete'])->name('stock-entries.force-delete');
+    });
+});
+
+//============================ Inventory ========================================
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::resource('inventory', InventoryController::class)->only(['index', 'edit', 'update']);
+});
+
+// Notification routes
+Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllRead'])->name('notifications.markAllRead');
