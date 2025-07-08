@@ -21,32 +21,55 @@
         >
         <input type="hidden" id="searchCaret" name="searchCaret" value="">
     </form>
+    <script>
+        const searchInput = document.getElementById('search');
+        const searchForm = document.getElementById('searchForm');
+        searchInput.addEventListener('input', function(e) {
+            // Save caret position
+            localStorage.setItem('stockEntrySearchCaret', searchInput.selectionStart);
+            searchForm.submit();
+        });
+        window.addEventListener('DOMContentLoaded', function() {
+            // Always focus search input on page load
+            searchInput.focus();
+            // Restore caret position if available
+            const caret = localStorage.getItem('stockEntrySearchCaret');
+            if (caret) {
+                searchInput.setSelectionRange(caret, caret);
+                localStorage.removeItem('stockEntrySearchCaret');
+            }
+        });
+    </script>
 
     <div class="mb-4 flex flex-col sm:flex-row sm:items-center sm:space-x-6 space-y-2 sm:space-y-0">
         <span class="font-semibold">Display Columns:</span>
         <div class="flex flex-wrap gap-4">
             <label class="inline-flex items-center">
-                <input type="checkbox" class="column-toggle rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" data-col="date" checked>
+                <input type="checkbox" class="column-toggle rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" data-col="date">
                 <span class="ml-2">Date</span>
             </label>
             <label class="inline-flex items-center">
-                <input type="checkbox" class="column-toggle rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" data-col="product" checked>
+                <input type="checkbox" class="column-toggle rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" data-col="product">
                 <span class="ml-2">Product</span>
             </label>
             <label class="inline-flex items-center">
-                <input type="checkbox" class="column-toggle rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" data-col="vendor" checked>
+                <input type="checkbox" class="column-toggle rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" data-col="vendor">
                 <span class="ml-2">Vendor</span>
             </label>
             <label class="inline-flex items-center">
-                <input type="checkbox" class="column-toggle rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" data-col="quantity" checked>
+                <input type="checkbox" class="column-toggle rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" data-col="quantity">
                 <span class="ml-2">Quantity</span>
             </label>
             <label class="inline-flex items-center">
-                <input type="checkbox" class="column-toggle rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" data-col="cost" checked>
-                <span class="ml-2">Cost</span>
+                <input type="checkbox" class="column-toggle rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" data-col="cost">
+                <span class="ml-2">Unit Cost</span>
             </label>
             <label class="inline-flex items-center">
-                <input type="checkbox" class="column-toggle rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" data-col="actions" checked>
+                <input type="checkbox" class="column-toggle rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" data-col="cost">
+                <span class="ml-2">Total Cost</span>
+            </label>
+            <label class="inline-flex items-center">
+                <input type="checkbox" class="column-toggle rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" data-col="actions">
                 <span class="ml-2">Actions</span>
             </label>
         </div>
@@ -74,7 +97,7 @@
             <tbody>
                 @foreach($entries as $entry)
                 <tr class="border-b border-gray-200 hover:bg-gray-100">
-                    <td class="py-3 px-6 col-date"> {{ \Carbon\Carbon::parse($entry->entry_date)->format('M d, Y') }}</td>
+                    <td class="py-3 px-6 col-date">{{ \Carbon\Carbon::parse($entry->entry_date)->format('M d, Y') }}</td>
                     <td class="py-3 px-6 col-product">{{ $entry->product->name }}</td>
                     <td class="py-3 px-6 col-vendor">{{ $entry->vendor->name }}</td>
                     <td class="py-3 px-6 col-quantity">{{ $entry->quantity }}</td>
@@ -115,11 +138,31 @@
 </div>
 
 <script>
-    // Column toggle functionality same as vendors index
     document.addEventListener('DOMContentLoaded', function() {
+        // Default preferences if none are saved
+        const defaultPreferences = {
+            date: true,
+            product: true,
+            vendor: true,
+            quantity: true,
+            cost: true,
+            actions: true
+        };
+
+        // Load saved preferences from localStorage or use defaults
+        const savedPreferences = localStorage.getItem('stockEntryColumnPreferences');
+        const preferences = savedPreferences ? JSON.parse(savedPreferences) : defaultPreferences;
+
+        // Apply preferences to checkboxes
+        document.querySelectorAll('.column-toggle').forEach(toggle => {
+            const col = toggle.dataset.col;
+            toggle.checked = preferences[col] || false;
+        });
+
+        // Initialize column visibility based on checkboxes
         setColumnVisibility();
-        loadColumnPreferences();
         
+        // Add event listeners to all checkboxes
         document.querySelectorAll('.column-toggle').forEach(toggle => {
             toggle.addEventListener('change', function() {
                 setColumnVisibility();
@@ -149,19 +192,6 @@
             preferences[toggle.dataset.col] = toggle.checked;
         });
         localStorage.setItem('stockEntryColumnPreferences', JSON.stringify(preferences));
-    }
-
-    function loadColumnPreferences() {
-        const savedPreferences = localStorage.getItem('stockEntryColumnPreferences');
-        if (savedPreferences) {
-            const preferences = JSON.parse(savedPreferences);
-            document.querySelectorAll('.column-toggle').forEach(toggle => {
-                const col = toggle.dataset.col;
-                if (preferences.hasOwnProperty(col)) {
-                    toggle.checked = preferences[col];
-                }
-            });
-        }
     }
 </script>
 @endsection

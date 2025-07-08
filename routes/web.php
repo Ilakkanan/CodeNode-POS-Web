@@ -110,3 +110,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
 // Notification routes
 Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllRead'])->name('notifications.markAllRead');
+
+
+Route::post('/notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead'])
+    ->name('notifications.markAsRead')
+    ->middleware('auth');

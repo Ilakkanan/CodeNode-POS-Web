@@ -11,7 +11,7 @@ class LowStockNotification extends Notification
 {
     use Queueable;
 
-    protected $inventory;
+    public $inventory;
 
     public function __construct($inventory)
     {
@@ -26,10 +26,9 @@ class LowStockNotification extends Notification
     public function toArray($notifiable)
     {
         return [
-            'message' => 'Low stock alert for ' . $this->inventory->product->name,
+            'message' => "Low stock alert for {$this->inventory->product->name}. Available: {$this->inventory->available_quantity}, Alert: {$this->inventory->alert_quantity}",
             'product_id' => $this->inventory->product_id,
-            'available_quantity' => $this->inventory->available_quantity,
-            'alert_quantity' => $this->inventory->alert_quantity
+            'date' => now()->toDateString(), // Store the current date
         ];
     }
 }

@@ -45,11 +45,11 @@
         <span class="font-semibold">Display Columns:</span>
         <div class="flex flex-wrap gap-4">
             <label class="inline-flex items-center">
-                <input type="checkbox" class="column-toggle rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" data-col="name" checked>
+                <input type="checkbox" class="column-toggle rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" data-col="name">
                 <span class="ml-2">Name</span>
             </label>
             <label class="inline-flex items-center">
-                <input type="checkbox" class="column-toggle rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" data-col="contact" checked>
+                <input type="checkbox" class="column-toggle rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" data-col="contact">
                 <span class="ml-2">Contact No</span>
             </label>
             <label class="inline-flex items-center">
@@ -57,18 +57,33 @@
                 <span class="ml-2">Address</span>
             </label>
             <label class="inline-flex items-center">
-                <input type="checkbox" class="column-toggle rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" data-col="actions" checked>
+                <input type="checkbox" class="column-toggle rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" data-col="actions">
                 <span class="ml-2">Actions</span>
             </label>
         </div>
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Default preferences if none are saved
+            const defaultPreferences = {
+                name: true,
+                contact: true,
+                address: false,
+                actions: true
+            };
+
+            // Load saved preferences from localStorage or use defaults
+            const savedPreferences = localStorage.getItem('vendorColumnPreferences');
+            const preferences = savedPreferences ? JSON.parse(savedPreferences) : defaultPreferences;
+
+            // Apply preferences to checkboxes
+            document.querySelectorAll('.column-toggle').forEach(toggle => {
+                const col = toggle.dataset.col;
+                toggle.checked = preferences[col] || false;
+            });
+
             // Initialize column visibility based on checkboxes
             setColumnVisibility();
-            
-            // Load saved preferences from localStorage
-            loadColumnPreferences();
             
             // Add event listeners to all checkboxes
             document.querySelectorAll('.column-toggle').forEach(toggle => {
@@ -102,19 +117,6 @@
                 preferences[toggle.dataset.col] = toggle.checked;
             });
             localStorage.setItem('vendorColumnPreferences', JSON.stringify(preferences));
-        }
-
-        function loadColumnPreferences() {
-            const savedPreferences = localStorage.getItem('vendorColumnPreferences');
-            if (savedPreferences) {
-                const preferences = JSON.parse(savedPreferences);
-                document.querySelectorAll('.column-toggle').forEach(toggle => {
-                    const col = toggle.dataset.col;
-                    if (preferences.hasOwnProperty(col)) {
-                        toggle.checked = preferences[col];
-                    }
-                });
-            }
         }
     </script>
 
