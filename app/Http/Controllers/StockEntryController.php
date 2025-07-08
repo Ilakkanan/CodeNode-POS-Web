@@ -14,7 +14,9 @@ class StockEntryController extends Controller
 {
     public function index()
     {
-        $entries = StockEntry::with(['product', 'vendor', 'user'])
+        $entries = StockEntry::with(['product' => function($query) {
+                $query->withTrashed(); // Include trashed products
+            }, 'vendor', 'user'])
             ->latest()
             ->paginate(10);
 
@@ -23,7 +25,7 @@ class StockEntryController extends Controller
 
     public function create()
     {
-        $products = Product::orderBy('name')->get();
+        $products = Product::withTrashed()->orderBy('name')->get(); // Include trashed products
         $vendors = Vendor::orderBy('name')->get();
         return view('stock-entries.create', compact('products', 'vendors'));
     }
@@ -31,7 +33,7 @@ class StockEntryController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'product_id' => 'required|exists:products,id',
+            'product_id' => 'required|exists:products,id', // This will work for both trashed and non-trashed products
             'vendor_id' => 'required|exists:vendors,id',
             'quantity' => 'required|integer|min:1',
             'unit_cost' => 'required|numeric|min:0',
@@ -46,11 +48,7 @@ class StockEntryController extends Controller
         // Create the stock entry
         StockEntry::create($validated);
 
-        // // Update product stock
-        // $product = Product::find($validated['product_id']);
-        // $product->increment('stock_quantity', $validated['quantity']);
-
-        // Update or create inventory record
+        // Update or create inventory record (even for trashed products)
         $inventory = Inventory::firstOrCreate(
             ['product_id' => $validated['product_id']],
             ['alert_quantity' => 20] // Default value
@@ -72,23 +70,31 @@ class StockEntryController extends Controller
 
     public function show(StockEntry $stockEntry)
     {
-        // Eager load all necessary relationships
-        $stockEntry->load(['product', 'vendor', 'user']);
+        // Eager load all necessary relationships including trashed products
+        $stockEntry->load(['product' => function($query) {
+            $query->withTrashed();
+        }, 'vendor', 'user']);
         
         return view('stock-entries.show', compact('stockEntry'));
     }
 
     public function edit(StockEntry $stockEntry)
     {
-        $products = Product::orderBy('name')->get();
+        $products = Product::withTrashed()->orderBy('name')->get(); // Include trashed products
         $vendors = Vendor::orderBy('name')->get();
+        
+        // Load trashed product if necessary
+        $stockEntry->load(['product' => function($query) {
+            $query->withTrashed();
+        }]);
+        
         return view('stock-entries.edit', compact('stockEntry', 'products', 'vendors'));
     }
 
     public function update(Request $request, StockEntry $stockEntry)
     {
         $validated = $request->validate([
-            'product_id' => 'required|exists:products,id',
+            'product_id' => 'required|exists:products,id', // Works for trashed products too
             'vendor_id' => 'required|exists:vendors,id',
             'quantity' => 'required|integer|min:1',
             'unit_cost' => 'required|numeric|min:0',
@@ -103,7 +109,7 @@ class StockEntryController extends Controller
 
         $stockEntry->update($validated);
 
-        // Update inventory if quantity changed
+        // Update inventory if quantity changed (works even if product is trashed)
         if ($quantityDiff != 0) {
             $inventory = Inventory::where('product_id', $validated['product_id'])->first();
             if ($inventory) {
@@ -124,7 +130,7 @@ class StockEntryController extends Controller
 
     public function destroy(StockEntry $stockEntry)
     {
-        // Decrement inventory before deleting
+        // Decrement inventory before deleting (works even if product is trashed)
         $inventory = Inventory::where('product_id', $stockEntry->product_id)->first();
         
         if ($inventory) {
@@ -140,7 +146,9 @@ class StockEntryController extends Controller
     public function trashed(Request $request)
     {
         $query = StockEntry::onlyTrashed()
-            ->with(['product', 'vendor', 'user']);
+            ->with(['product' => function($query) {
+                $query->withTrashed(); // Include trashed products
+            }, 'vendor', 'user']);
 
         if ($request->has('search')) {
             $search = $request->search;
@@ -148,7 +156,7 @@ class StockEntryController extends Controller
                 $q->where('reference_number', 'like', "%$search%")
                   ->orWhere('notes', 'like', "%$search%")
                   ->orWhereHas('product', function($q) use ($search) {
-                      $q->where('name', 'like', "%$search%");
+                      $q->withTrashed()->where('name', 'like', "%$search%");
                   })
                   ->orWhereHas('vendor', function($q) use ($search) {
                       $q->where('name', 'like', "%$search%");
@@ -165,7 +173,7 @@ class StockEntryController extends Controller
     {
         $entry = StockEntry::onlyTrashed()->findOrFail($id);
         
-        // Increment inventory when restoring
+        // Increment inventory when restoring (works even if product is trashed)
         $inventory = Inventory::where('product_id', $entry->product_id)->first();
         
         if ($inventory) {
